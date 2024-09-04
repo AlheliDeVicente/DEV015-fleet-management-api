@@ -14,14 +14,14 @@ public class Trajectories {
     @Column(name = "date")
     private Date date;
     @Column(name = "latitude")
-    private Float latitude;
+    private Double latitude;
     @Column(name = "longitude")
-    private Float longitude;
+    private Double longitude;
 
     public Trajectories() {
     }
 
-    public Trajectories(Integer id, Taxi taxiId, Date date, Float latitude, Float longitude) {
+    public Trajectories(Integer id, Taxi taxiId, Date date, Double latitude, Double longitude) {
         this.id = id;
         this.taxiId = taxiId;
         this.date = date;
