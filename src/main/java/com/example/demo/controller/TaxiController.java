@@ -10,20 +10,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.FileNotFoundException;
+
 @RestController
-@RequestMapping("/taxis")
+
 public class TaxiController {
 
-    private final TaxiService taxiService;
-
     @Autowired
+    private TaxiService taxiService;
+
     public TaxiController(TaxiService taxiService) {
         this.taxiService = taxiService;
     }
 
-    @GetMapping
-    public Page<Taxi> getAllTaxis(@RequestParam(required = false) String plate, Pageable pageable) {
-        return taxiService.findAllTaxis(plate, pageable);
+    @GetMapping("/taxis")
+    public Page<Taxi> getAllTaxis (@RequestParam(required = false) String plate, Pageable pageable) throws FileNotFoundException {
+        try {
+            return taxiService.findAllTaxis(plate, pageable);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 

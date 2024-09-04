@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
+
 @Service
 public class TaxiService {
 
@@ -17,10 +19,11 @@ public class TaxiService {
         this.taxiRepository = taxiRepository;
     }
 
-    public Page<Taxi> findAllTaxis(String plate, Pageable pageable) {
+    public Page<Taxi> findAllTaxis(String plate, Pageable pageable) throws FileNotFoundException {
         if (plate != null && !plate.isEmpty()) {
             return taxiRepository.findAllByPlateContainingIgnoreCase(plate, pageable);
-        } else {
+        }
+        else {
             return taxiRepository.findAll(pageable);
         }
     }
