@@ -20,9 +20,9 @@ public class TrajectoriesService {
         this.taxiRepository = taxiRepository;
     }
 
-    public Page<Trajectories> findAllTrajectories(Integer taxiId, Date date, Pageable pageable) throws FileNotFoundException {
+    public Page<Trajectories> findAllTrajectories(Integer taxiId, String date, Pageable pageable) throws FileNotFoundException {
         if (taxiId != null) {
-            return trajectoriesRepository.findTrajectoryByIdAndDate(taxiId, date, pageable);
+            return trajectoriesRepository.findTrajectoryByTaxiIdAndDate(taxiId, date, pageable);
         }
         else {
             return trajectoriesRepository.findAll(pageable);

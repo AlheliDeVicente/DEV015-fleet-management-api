@@ -18,8 +18,8 @@ public class TrajectoriesController {
     private TrajectoriesService trajectoriesService;
 
     @GetMapping("/trajectories")
-    public Page<Trajectories> getAllTrajectories(@RequestParam(required = false) Integer taxiId, @RequestParam(required = false) Date date, Pageable pageable) throws FileNotFoundException {
-        return trajectoriesService.findAllTrajectories(taxiId, (java.sql.Date) date, pageable);
+    public Page<Trajectories> getAllTrajectories(@RequestParam(required = false) Integer taxi_id, @RequestParam(required = false) String date, Pageable pageable) throws FileNotFoundException {
+        return trajectoriesService.findAllTrajectories(taxi_id, date, pageable);
     }
 
 }
