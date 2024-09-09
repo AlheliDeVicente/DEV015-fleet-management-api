@@ -6,26 +6,28 @@ import java.util.Date;
 
 public class TrajectoriesDTO implements Serializable {
     private Integer id;
-    private Taxi taxiId;
+    private Integer taxiId;
+    private String plate;
     private Date date;
     private Double latitude;
     private Double longitude;
 
-    public TrajectoriesDTO(Integer id, Taxi taxiId, Date date, Double latitude, Double longitude) {
+    public String getPlate() {
+        return plate;
+    }
+
+    public TrajectoriesDTO(Integer id, Integer taxiId, String plate, Date date, Double latitude, Double longitude) {
         this.id = id;
         this.taxiId = taxiId;
+        this.plate = plate;
         this.date = date;
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    public TrajectoriesDTO(Integer id, String plate, Integer id1, Date date, Double latitude, Double longitude) {
-    }
-
     public TrajectoriesDTO() {
 
     }
-
 
     public Integer getId() {
         return id;
@@ -35,11 +37,15 @@ public class TrajectoriesDTO implements Serializable {
         this.id = id;
     }
 
-    public Taxi getTaxiId() {
+    public void setPlate(String plate) {
+        this.plate = plate;
+    }
+
+    public Integer getTaxiId() {
         return taxiId;
     }
 
-    public void setTaxiId(Taxi taxiId) {
+    public void setTaxiId(Integer taxiId) {
         this.taxiId = taxiId;
     }
 
@@ -65,12 +71,5 @@ public class TrajectoriesDTO implements Serializable {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
-    }
-
-    public void setPlate(String plate) {
-
-    }
-
-    public void setTaxiId(Integer id) {
     }
 }
