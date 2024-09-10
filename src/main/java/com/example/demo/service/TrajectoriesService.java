@@ -8,8 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.PageImpl;
+
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class TrajectoriesService {
@@ -22,7 +26,7 @@ public class TrajectoriesService {
         this.taxiRepository = taxiRepository;
     }
 
-    private TrajectoriesDTO convertToDTO(Trajectories trajectories){
+    private TrajectoriesDTO convertToDTO(Trajectories trajectories) {
         TrajectoriesDTO dto = new TrajectoriesDTO();
         dto.setId(trajectories.getId());
         dto.setTaxiId(trajectories.getTaxiId().getId());
@@ -41,6 +45,11 @@ public class TrajectoriesService {
         } else {
             trajectoriesPage = trajectoriesRepository.findAll(pageable);
         }
-        return trajectoriesPage.map(this::convertToDTO);
+        List<TrajectoriesDTO> dtoList = new ArrayList<>();
+        for (Trajectories trajectory : trajectoriesPage.getContent()) {
+            TrajectoriesDTO dto = convertToDTO(trajectory);
+            dtoList.add(dto);
+        }
+            return new PageImpl<>(dtoList, pageable, trajectoriesPage.getTotalElements());
+        }
     }
-}
