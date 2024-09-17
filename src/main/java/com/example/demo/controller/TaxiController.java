@@ -5,6 +5,8 @@ import com.example.demo.service.TaxiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,14 +27,11 @@ public class TaxiController {
     }
 
     @GetMapping("/taxis")
-    public List<Taxi> getAllTaxis (@RequestParam(required = false) String plate, Pageable pageable) throws FileNotFoundException {
-        try {
+    public ResponseEntity<List<Taxi>> getAllTaxis (@RequestParam(required = false) String plate, @RequestParam(defaultValue = "10") int limit, Pageable pageable) throws FileNotFoundException {
           Page<Taxi> page = taxiService.findAllTaxis(plate, pageable);
-          return page.getContent();
-    } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+          return new ResponseEntity<>(page.getContent(), HttpStatus.OK);
         }
 }
-}
+
 
 

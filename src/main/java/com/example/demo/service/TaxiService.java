@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.exceptions.DataNotFoundException;
 import com.example.demo.model.Taxi;
 import com.example.demo.repository.TaxiRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +17,25 @@ public class TaxiService {
 
     @Autowired
     public TaxiService(TaxiRepository taxiRepository) {
+
         this.taxiRepository = taxiRepository;
     }
 
-    public Page<Taxi> findAllTaxis(String plate, Pageable pageable) throws FileNotFoundException {
-        if (plate != null && !plate.isEmpty()) {
-            return taxiRepository.findAllByPlateContainingIgnoreCase(plate, pageable);
+    public Page<Taxi> findAllTaxis(String plate, Pageable pageable) {
+        Page<Taxi> taxisPage;
+        if(plate != null && !plate.isEmpty()){
+            taxisPage = taxiRepository.findAllByPlateContainingIgnoreCase(plate, pageable);
+            if (taxisPage.isEmpty()){
+                throw new DataNotFoundException("No taxis found with plate containing " + plate);
+            }
+            return taxisPage;
+        } else {
+        taxisPage = taxiRepository.findAll(pageable);
+        if(taxisPage.isEmpty()){
+            throw new DataNotFoundException("No taxis found");
         }
-        else {
-            return taxiRepository.findAll(pageable);
-        }
+        return taxisPage;
     }
+}
 }
 
