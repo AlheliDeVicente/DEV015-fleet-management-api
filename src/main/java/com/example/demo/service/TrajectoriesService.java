@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
 import com.example.demo.DTO.TrajectoriesDTO;
+import com.example.demo.exceptions.BadRequestException;
+import com.example.demo.exceptions.DataNotFoundException;
 import com.example.demo.model.Trajectories;
 import com.example.demo.repository.TaxiRepository;
 import com.example.demo.repository.TrajectoriesRepository;
@@ -35,18 +37,18 @@ public class TrajectoriesService {
     }
 
     public Page<TrajectoriesDTO> findAllTrajectories(Integer taxiId, String date, Pageable pageable) {
-        Page<Trajectories> trajectoriesPage;
-
-        if (taxiId != null) {
-            trajectoriesPage = trajectoriesRepository.findTrajectoryByTaxiIdAndDate(taxiId, date, pageable);
-        } else {
-            trajectoriesPage = trajectoriesRepository.findAll(pageable);
+        if(taxiId == null || date == null || date.isEmpty()){
+            throw new BadRequestException("Please provide a taxiId and a date");
+        }
+        Page<Trajectories> trajectoriesPage = trajectoriesRepository.findTrajectoryByTaxiIdAndDate(taxiId, date, pageable);
+        if(trajectoriesPage.isEmpty()){
+            throw new DataNotFoundException("No trajectory found for taxi " + taxiId + " on date " + date);
         }
         List<TrajectoriesDTO> dtoList = new ArrayList<>();
         for (Trajectories trajectory : trajectoriesPage.getContent()) {
             TrajectoriesDTO dto = convertToDTO(trajectory);
             dtoList.add(dto);
         }
-            return new PageImpl<>(dtoList, pageable, trajectoriesPage.getTotalElements());
-        }
+        return new PageImpl<>(dtoList, pageable, trajectoriesPage.getTotalElements());
     }
+}

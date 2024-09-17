@@ -17,8 +17,8 @@ public class TrajectoriesController {
     private TrajectoriesService trajectoriesService;
 
     @GetMapping("/trajectories")
-    public List<TrajectoriesDTO> getAllTrajectories(@RequestParam(required = false) Integer taxi_id, @RequestParam(required = false) String date, Pageable pageable) throws FileNotFoundException {
-        return trajectoriesService.findAllTrajectories(taxi_id, date, pageable).getContent();
+    public List<TrajectoriesDTO> getAllTrajectories(@RequestParam(required = false) Integer taxiId, @RequestParam(required = false) String date, Pageable pageable) {
+        return trajectoriesService.findAllTrajectories(taxiId, date, pageable).getContent();
     }
 
 }
