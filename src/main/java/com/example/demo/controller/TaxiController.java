@@ -27,10 +27,10 @@ public class TaxiController {
     }
 
     @GetMapping("/taxis")
-    public ResponseEntity<List<Taxi>> getAllTaxis (@RequestParam(required = false) String plate, @RequestParam(defaultValue = "10") int limit, Pageable pageable) throws FileNotFoundException {
-          Page<Taxi> page = taxiService.findAllTaxis(plate, pageable);
-          return new ResponseEntity<>(page.getContent(), HttpStatus.OK);
-        }
+    public ResponseEntity<List<Taxi>> getAllTaxis (@RequestParam(required = false) String plate, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int limit){
+        Page<Taxi> Taxispage = taxiService.findAllTaxis(plate, page, limit);
+        return new ResponseEntity<>(Taxispage.getContent(), HttpStatus.OK);
+    }
 }
 
 

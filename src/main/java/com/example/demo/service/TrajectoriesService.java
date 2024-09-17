@@ -7,13 +7,11 @@ import com.example.demo.model.Trajectories;
 import com.example.demo.repository.TaxiRepository;
 import com.example.demo.repository.TrajectoriesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.PageImpl;
 
-import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -65,5 +63,19 @@ public class TrajectoriesService {
             dtoList.add(dto);
         }
         return new PageImpl<>(dtoList, pageable, trajectoriesPage.getTotalElements());
+    }
+    public List<TrajectoriesDTO> findLastTrajectory() {
+        List<Trajectories> lastTrajectories =  trajectoriesRepository.findLastTrajectory();
+        List<TrajectoriesDTO> dtoList = new ArrayList<>();
+        for (Trajectories trajectory : lastTrajectories) {
+            TrajectoriesDTO dtoTwoPoint0 = convertToDTO(trajectory);
+            dtoTwoPoint0.setTaxiId(trajectory.getTaxiId().getId());
+            dtoTwoPoint0.setPlate(trajectory.getTaxiId().getPlate());
+            dtoTwoPoint0.setDate(trajectory.getDate());
+            dtoTwoPoint0.setLatitude(trajectory.getLatitude());
+            dtoTwoPoint0.setLongitude(trajectory.getLongitude());
+            dtoList.add(dtoTwoPoint0);
+        }
+        return dtoList;
     }
 }
