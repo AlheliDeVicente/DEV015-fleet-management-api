@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 
 @RestController
 
@@ -24,13 +25,14 @@ public class TaxiController {
     }
 
     @GetMapping("/taxis")
-    public Page<Taxi> getAllTaxis (@RequestParam(required = false) String plate, Pageable pageable) throws FileNotFoundException {
+    public List<Taxi> getAllTaxis (@RequestParam(required = false) String plate, Pageable pageable) throws FileNotFoundException {
         try {
-            return taxiService.findAllTaxis(plate, pageable);
-        } catch (FileNotFoundException e) {
+          Page<Taxi> page = taxiService.findAllTaxis(plate, pageable);
+          return page.getContent();
+    } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
-    }
+}
 }
 
 
