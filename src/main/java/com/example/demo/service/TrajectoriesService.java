@@ -7,10 +7,16 @@ import com.example.demo.model.Trajectories;
 import com.example.demo.repository.TaxiRepository;
 import com.example.demo.repository.TrajectoriesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.PageImpl;
+
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +45,15 @@ public class TrajectoriesService {
     public Page<TrajectoriesDTO> findAllTrajectories(Integer taxiId, String date, Pageable pageable) {
         if(taxiId == null || date == null || date.isEmpty()){
             throw new BadRequestException("Please provide a taxiId and a date");
+        }
+        if(!taxiRepository.existsById(taxiId)){
+            throw new DataNotFoundException("Taxi id not found, please try again");
+        }
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        try{
+            LocalDate parsedDate = LocalDate.parse(date, dateTimeFormatter);
+        } catch(DateTimeParseException e){
+            throw new BadRequestException("Invalid date Format, expected dd-MM-yyyy");
         }
         Page<Trajectories> trajectoriesPage = trajectoriesRepository.findTrajectoryByTaxiIdAndDate(taxiId, date, pageable);
         if(trajectoriesPage.isEmpty()){
