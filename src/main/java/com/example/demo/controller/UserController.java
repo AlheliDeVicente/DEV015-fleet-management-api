@@ -24,9 +24,9 @@ public class UserController {
         userService.delete(uid);
     }
     @PatchMapping("/users/{uid}")
-    private ResponseEntity<User> updateUser (@RequestBody User user)
+    private ResponseEntity<User> updateUser (@RequestBody User user, @PathVariable("uid") int uid)
     {
-        User updatedUser = userService.update(user);
+        User updatedUser = userService.update(user, uid);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
     @PostMapping("/users")

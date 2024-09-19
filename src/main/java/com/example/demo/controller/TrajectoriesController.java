@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.DTO.TrajectoriesDTO;
 import com.example.demo.service.TrajectoriesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,13 +20,14 @@ public class TrajectoriesController {
     private TrajectoriesService trajectoriesService;
 
     @GetMapping("/trajectories")
-    public List<TrajectoriesDTO> getAllTrajectories(@RequestParam(required = false) Integer taxiId, @RequestParam(required = false) String date, Pageable pageable) {
-        return trajectoriesService.findAllTrajectories(taxiId, date, pageable).getContent();
+    public ResponseEntity<List<TrajectoriesDTO>> getAllTrajectories(@RequestParam(required = false) Integer taxiId, @RequestParam(required = false) String date, Pageable pageable) {
+        Page <TrajectoriesDTO> allTrajectories = trajectoriesService.findAllTrajectories(taxiId, date, pageable);
+        return new ResponseEntity<>(allTrajectories.getContent(),HttpStatus.OK);
     }
 
     @GetMapping("/trajectories/latest")
-    public ResponseEntity<List<TrajectoriesDTO>> getLatestTrajectory(){
-        List<TrajectoriesDTO> lastLocations = trajectoriesService.findLastTrajectory();
-        return new ResponseEntity<>(lastLocations, HttpStatus.OK);
+    public ResponseEntity<List<TrajectoriesDTO>> getLatestTrajectory(Pageable pageable){
+        Page <TrajectoriesDTO> lastLocations = trajectoriesService.findLastTrajectory(pageable);
+        return new ResponseEntity<>(lastLocations.getContent(), HttpStatus.OK);
     }
 }

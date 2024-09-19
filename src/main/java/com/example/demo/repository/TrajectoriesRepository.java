@@ -13,5 +13,5 @@ public interface TrajectoriesRepository extends JpaRepository<Trajectories, Inte
     Page<Trajectories> findTrajectoryByTaxiIdAndDate(Integer taxiId, String date, Pageable pageable);
 
     @Query(nativeQuery = true, value = "SELECT t.* FROM trajectories t INNER JOIN (SELECT taxi_id, MAX(Date) As latestDate FROM trajectories GROUP BY taxi_id) Latest ON Latest.latestDate = t.date AND Latest.taxi_id = t.taxi_id")
-    List<Trajectories> findLastTrajectory();
+    Page<Trajectories> findLastTrajectory(Pageable pageable);
 }

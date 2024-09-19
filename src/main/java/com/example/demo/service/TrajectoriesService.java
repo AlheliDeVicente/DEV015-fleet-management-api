@@ -64,10 +64,10 @@ public class TrajectoriesService {
         }
         return new PageImpl<>(dtoList, pageable, trajectoriesPage.getTotalElements());
     }
-    public List<TrajectoriesDTO> findLastTrajectory() {
-        List<Trajectories> lastTrajectories =  trajectoriesRepository.findLastTrajectory();
+    public Page<TrajectoriesDTO> findLastTrajectory(Pageable pageable) {
+        Page<Trajectories> lastTrajectories =  trajectoriesRepository.findLastTrajectory(pageable);
         List<TrajectoriesDTO> dtoList = new ArrayList<>();
-        for (Trajectories trajectory : lastTrajectories) {
+        for (Trajectories trajectory : lastTrajectories.getContent()) {
             TrajectoriesDTO dtoTwoPoint0 = convertToDTO(trajectory);
             dtoTwoPoint0.setTaxiId(trajectory.getTaxiId().getId());
             dtoTwoPoint0.setPlate(trajectory.getTaxiId().getPlate());
@@ -76,6 +76,6 @@ public class TrajectoriesService {
             dtoTwoPoint0.setLongitude(trajectory.getLongitude());
             dtoList.add(dtoTwoPoint0);
         }
-        return dtoList;
+        return new PageImpl<>(dtoList, pageable, lastTrajectories.getTotalElements());
     }
 }
