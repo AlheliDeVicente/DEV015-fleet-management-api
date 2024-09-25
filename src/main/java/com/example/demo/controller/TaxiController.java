@@ -22,12 +22,12 @@ public class TaxiController {
     @Autowired
     private TaxiService taxiService;
 
-    public TaxiController(TaxiService taxiService) {
+    private TaxiController(TaxiService taxiService) {
         this.taxiService = taxiService;
     }
 
     @GetMapping("/taxis")
-    public ResponseEntity<List<Taxi>> getAllTaxis (@RequestParam(required = false) String plate, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int limit){
+    private ResponseEntity<List<Taxi>> getAllTaxis (@RequestParam(required = false) String plate, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int limit){
         Page<Taxi> Taxispage = taxiService.findAllTaxis(plate, page, limit);
         return new ResponseEntity<>(Taxispage.getContent(), HttpStatus.OK);
     }

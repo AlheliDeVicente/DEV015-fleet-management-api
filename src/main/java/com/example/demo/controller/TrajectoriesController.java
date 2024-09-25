@@ -20,13 +20,13 @@ public class TrajectoriesController {
     private TrajectoriesService trajectoriesService;
 
     @GetMapping("/trajectories")
-    public ResponseEntity<List<TrajectoriesDTO>> getAllTrajectories(@RequestParam(required = false) Integer taxiId, @RequestParam(required = false) String date, Pageable pageable) {
+    private ResponseEntity<List<TrajectoriesDTO>> getAllTrajectories(@RequestParam(required = false) Integer taxiId, @RequestParam(required = false) String date, Pageable pageable) {
         Page <TrajectoriesDTO> allTrajectories = trajectoriesService.findAllTrajectories(taxiId, date, pageable);
         return new ResponseEntity<>(allTrajectories.getContent(),HttpStatus.OK);
     }
 
     @GetMapping("/trajectories/latest")
-    public ResponseEntity<List<TrajectoriesDTO>> getLatestTrajectory(Pageable pageable){
+    private ResponseEntity<List<TrajectoriesDTO>> getLatestTrajectory(Pageable pageable){
         Page <TrajectoriesDTO> lastLocations = trajectoriesService.findLastTrajectory(pageable);
         return new ResponseEntity<>(lastLocations.getContent(), HttpStatus.OK);
     }
