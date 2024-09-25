@@ -1,10 +1,10 @@
 package com.example.demo.model;
 
+import com.example.demo.security.Role;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.Builder;
 
-import javax.management.relation.Role;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -68,5 +68,13 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 }
