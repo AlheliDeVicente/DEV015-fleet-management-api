@@ -4,10 +4,11 @@ import com.example.demo.security.Role;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.Builder;
+import org.springframework.security.core.GrantedAuthority;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 @Builder
 @Entity
@@ -37,6 +38,9 @@ public class User implements Serializable {
     }
 
     public User() {
+    }
+
+    public User(String name, String password, Collection<GrantedAuthority> grantedAuthorities) {
     }
 
     public Integer getid() {
