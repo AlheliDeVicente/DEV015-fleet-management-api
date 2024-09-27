@@ -1,5 +1,7 @@
 package com.example.demo.security;
 
+import com.example.demo.service.CustomUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,11 +19,12 @@ public class SecurityConfig {
 
     public static final String ADMIN = "admin";
     public static final String USER = "user";
-
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(
-                (authz) -> authz.requestMatchers("/api/some-path-here/**")
+                (authz) -> authz.requestMatchers("/api/auth/login")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET)
                         .permitAll()
