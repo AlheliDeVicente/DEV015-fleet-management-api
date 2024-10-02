@@ -1,10 +1,12 @@
 package com.example.demo.controller;
 
+import com.example.demo.DTO.AuthResponseDto;
 import com.example.demo.DTO.LoginDto;
 import com.example.demo.DTO.RegisterDto;
 import com.example.demo.model.User;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.security.JwtGenerator;
 import com.example.demo.security.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,41 +31,54 @@ public class AuthController {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
+    private JwtGenerator jwtGenerator;
     private AuthenticationManager authenticationManager;
     @Autowired
     public AuthController(UserRepository userRepository,
-                          RoleRepository roleRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+                          RoleRepository roleRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtGenerator jwtGenerator) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.jwtGenerator = jwtGenerator;
     }
-
     @PostMapping("register")
     public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
 
-        if (userRepository.existsByName(registerDto.getUsername())) {
+        if (userRepository.existsByEmail(registerDto.getEmail())) {
             return new ResponseEntity<>("Username is taken!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (registerDto.getUsername() == null || registerDto.getUsername().isEmpty() ||
+                registerDto.getPassword() == null || registerDto.getPassword().isEmpty() ||
+                registerDto.getRole() == null || registerDto.getRole().isEmpty() ||
+                registerDto.getEmail() == null || registerDto.getEmail().isEmpty()) {
+            return new ResponseEntity<>("All fields are required!", HttpStatus.BAD_REQUEST);
         }
 
         User user = new User();
         user.setName(registerDto.getUsername());
-        user.setPassword(passwordEncoder.encode((registerDto.getPassword())));
+
+        // Codificar la contraseña y verificar el valor
+        String encodedPassword = passwordEncoder.encode(registerDto.getPassword());
+        System.out.println("Encoded Password: " + encodedPassword); // Imprime la contraseña codificada
+        user.setPassword(encodedPassword);
 
         Role roles = roleRepository.findByName(registerDto.getRole())
-                .orElseThrow(()-> new RuntimeException("Role not found"));
+                .orElseThrow(() -> new RuntimeException("Role not found"));
         user.setRoles(Collections.singletonList(roles));
 
         userRepository.save(user);
-
-        return new ResponseEntity<>("User registered success!", HttpStatus.OK);
+        return new ResponseEntity<>("User registered successfully!", HttpStatus.OK);
     }
+
     @PostMapping("login")
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
+    public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto loginDto) {
+
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
+                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String response = "You have succesfully logged in!";
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        String token = jwtGenerator.generateToken(authentication);
+        return new ResponseEntity<>(new AuthResponseDto(token), HttpStatus.OK);
     }
 }

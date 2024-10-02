@@ -8,15 +8,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class LoginDto {
-    private String username;
+    private String email;  // Cambia "username" por "email"
     private String password;
 
-    public String getUsername() {
-        return username;
+    // Getters y setters si son necesarios, aunque con Lombok no son obligatorios
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {

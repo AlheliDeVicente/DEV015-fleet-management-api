@@ -8,11 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
 public class UserService {
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    public UserService(PasswordEncoder passwordEncoder){
+        this.passwordEncoder = passwordEncoder;
+    }
     @Autowired
     UserRepository userRepository;
     public Page<User> getAllUsers(int page, int limit) {
@@ -27,6 +33,8 @@ public class UserService {
         if(user.getEmail() == null || user.getPassword() == null){
             throw new BadRequestException("Please provide an email and password");
         }
+        String encondedPassword = passwordEncoder.encode((user.getPassword()));
+        user.setPassword(encondedPassword);
         return userRepository.save(user);
     }
     public User update(User user, int uid){
