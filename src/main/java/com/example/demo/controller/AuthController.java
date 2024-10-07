@@ -58,7 +58,7 @@ public class AuthController {
 
         User user = new User();
         user.setName(registerDto.getUsername());
-
+        user.setEmail(registerDto.getEmail());
         // Codificar la contraseña y verificar el valor
         String encodedPassword = passwordEncoder.encode(registerDto.getPassword());
         System.out.println("Encoded Password: " + encodedPassword); // Imprime la contraseña codificada
@@ -67,7 +67,6 @@ public class AuthController {
         Role roles = roleRepository.findByName(registerDto.getRole())
                 .orElseThrow(() -> new RuntimeException("Role not found"));
         user.setRoles(Collections.singletonList(roles));
-
         userRepository.save(user);
         return new ResponseEntity<>("User registered successfully!", HttpStatus.OK);
     }
