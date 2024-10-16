@@ -13,17 +13,21 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    public static final String ADMIN = "admin";
-    public static final String USER = "user";
 
     @Autowired
     private CustomUserDetailsService userDetailsService;
     @Autowired
     private JwtAuthEntryPoint authEntryPoint;
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public static final String ADMIN = "ROLE_ADMIN";
+    public static final String USER = "ROLE_USER";
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -31,18 +35,19 @@ public class SecurityConfig {
                 .permitAll()
                 .requestMatchers(HttpMethod.GET)
                 .permitAll()
-                .requestMatchers(HttpMethod.DELETE)
-                .hasAuthority(ADMIN)
+                .requestMatchers(HttpMethod.DELETE, "/users/**")
+                .hasRole("USER")
                 .requestMatchers(HttpMethod.POST)
                 .permitAll()
-                .requestMatchers(HttpMethod.PUT)
-                .hasAuthority(USER)
+                .requestMatchers(HttpMethod.PUT, "/users/**")
+                .hasRole("USER")
                 .anyRequest()
                 .authenticated());
 
         http.exceptionHandling((exceptions) -> exceptions.authenticationEntryPoint(authEntryPoint));
         http.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.csrf(c -> c.disable());
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -55,10 +60,5 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
             throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter();
     }
 }
